@@ -100,7 +100,7 @@ resource "aws_security_group" "allow_ssh" {
 # Création de l'instance EC2
 resource "aws_instance" "web" {
   ami           = "ami-0fed63ea358539e44"  # AMI Amazon Linux 2023 pour eu-west-1
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
   subnet_id     = aws_subnet.public_1.id
   vpc_security_group_ids = [aws_security_group.allow_ssh.id]
 
