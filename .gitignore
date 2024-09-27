@@ -1,5 +1,5 @@
 ﻿# Fichier .gitignore
-TERRAFORM - project 1/.terraform/
+**/TERRAFORM*/.terraform/
 *.tfstate
 *.tfstate.backup
 *.tfvars
