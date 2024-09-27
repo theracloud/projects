@@ -3,4 +3,5 @@
 *.tfstate
 *.tfstate.backup
 *.tfvars
+*.docx
 ~$readme.*
