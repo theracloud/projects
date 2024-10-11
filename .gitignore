@@ -22,7 +22,9 @@ crash.*.log
 # Temporary files
 ~$readme.*
 
-#access-key pour créer une image Docker
-# dans le fichier .env de "TERRAFORM - image docker"
+#Ignorer les fichiers docker pour les variables d'environnement
 **/.env
 
+#Contiennnent Access-key et secret key
+/TERRAFORM - image docker/
+/TERRAFORM - image docker 2/
