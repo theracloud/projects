@@ -1,0 +1,58 @@
+<!-- Ne marche pas. On peut débugger par F12 dans Firefox. Erreur CORS que je n'arrive pas à débugger -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire de configuration</title>
+</head>
+<body>
+    <form id="configForm">
+        <label for="instance_type">Type d'instance :</label>
+        <input type="text" id="instance_type" name="instance_type" required><br><br>
+
+        <label for="region">Région :</label>
+        <input type="text" id="region" name="region" required><br><br>
+
+        <label for="subnet_id">ID du sous-réseau :</label>
+        <input type="text" id="subnet_id" name="subnet_id" required><br><br>
+
+        <label for="config_file">Fichier de configuration :</label>
+        <input type="file" id="config_file" name="config_file" accept=".txt"><br><br>
+
+        <button type="submit">Envoyer</button>
+    </form>
+
+    <script>
+        document.getElementById('configForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('instance_type', document.getElementById('instance_type').value);
+            formData.append('region', document.getElementById('region').value);
+            formData.append('subnet_id', document.getElementById('subnet_id').value);
+
+            const configFile = document.getElementById('config_file').files[0];
+            if (configFile) {
+                formData.append('config_file', configFile);
+            }
+
+            console.log("Données du formulaire:", Object.fromEntries(formData));
+
+            fetch('https://01fajjyqw1.execute-api.eu-west-1.amazonaws.com/ver1/create', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Succès:', data);
+                alert('Données envoyées avec succès !');
+            })
+            .catch((error) => {
+                console.error('Erreur:', error);
+                alert('Erreur lors de l\'envoi des données.');
+            });
+        });
+    </script>
+</body>
+</html>

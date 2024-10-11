@@ -1,0 +1,12 @@
+﻿provider "aws" {
+  region = "eu-west-1"  # Remplacez par votre région AWS préférée
+}
+
+resource "aws_instance" "web" {
+  ami = var.ami
+  instance_type = var.instance_type
+  count = length(var.webservers)
+  tags = {
+    Name = var.webservers[count.index]
+  } 
+}

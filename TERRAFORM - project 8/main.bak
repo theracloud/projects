@@ -1,0 +1,8 @@
+﻿resource "random_string" "random" {
+    length = 6
+    }
+
+resource "local_file" "test" {
+    filename = "./test.txt"
+    content = "bonjour-${random_string.random.result}"
+}

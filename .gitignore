@@ -1,0 +1,23 @@
+﻿# Terraform files
+**/TERRAFORM*/.terraform/
+**/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+crash.log
+crash.*.log
+
+# Word documents
+*.docx
+
+# Temporary files
+~$readme.*
