@@ -4,7 +4,8 @@
     { name = "bonjour8.txt", content = "bonjour-" },
     { name = "setune1.txt", content = "bonjour-" },
     { name = "salut67.txt", content = "bonjour-" },
-    { name = "dixittague45.py", content = "bonjour-" }
+    { name = "dixittague45.py", content = "bonjour-" },
+    { name = "herbanumer.txt", content = "bonjour-" }
   ]
 }
 

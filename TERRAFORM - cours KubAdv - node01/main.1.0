@@ -1,0 +1,16 @@
+# Configuration du provider AWS
+provider "aws" {
+  region = "eu-central-1"  
+}
+
+# Création de l'instance EC2 t3.medium avec OS ubuntu  
+resource "aws_instance" "ubuntu" {
+  ami                    = "ami-03b3b5f65db7e5c6f"  # AMI Ubuntu 22.04 LTS pour eu-central-1
+  instance_type          = "t3.medium"
+  subnet_id              = "subnet-070786d49edf2e769"
+  vpc_security_group_ids = ["sg-0c570579ef91de3ad"]
+  iam_instance_profile   = "AmazonSSMRoleForInstancesQuickSetup"
+  tags = {
+    Name = "node01"
+  }
+}
