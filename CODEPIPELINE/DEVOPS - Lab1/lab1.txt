@@ -20,7 +20,7 @@ Parameters:
   InstanceType:
     Description: WebServer EC2 instance type
     Type: String
-    Default: t2.nano
+    Default: t2.micro
     AllowedValues:
       - t2.nano
       - t2.micro
