@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: europe
+  name: europe-deploy
+  namespace: world
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: europe
+  template:
+    metadata:
+      labels:
+        app: europe
+    spec:
+      containers:
+      - args:
+        - echo 'hello, you reached EUROPE' > /usr/share/nginx/html/index.html; nginx
+          -g 'daemon off;'
+        command:
+        - /bin/sh
+        - -c
+        image: nginx:latest
+        name: nginx-container

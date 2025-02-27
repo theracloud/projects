@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: letsencrypt-ingress
+  namespace: world
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: kubeissuer
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - letsencrypt.theracloud.fr # Nom DNS du nodex1
+    secretName: letsencrypt-secret2
+  rules:
+  - host: letsencrypt.theracloud.fr # Nom DNS du nodex1
+    http:
+      paths:
+      - backend:
+          service:
+            name: europe-svc
+            port:
+              number: 80
+        path: /europe
+        pathType: Prefix
+      - backend:
+          service:
+            name: asia-svc
+            port:
+              number: 80
+        path: /asia
+        pathType: Prefix
+      - backend:
+          service:
+            name: website-svc
+            port:
+              number: 80
+        path: /
+        pathType: Prefix

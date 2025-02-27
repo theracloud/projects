@@ -1,0 +1,24 @@
+import boto3
+import json
+
+def lambda_handler(event, context):
+    ec2 = boto3.resource('ec2')
+    # Log l'événement complet
+    print(f"Received event: {json.dumps(event)}")
+    
+    instances = ec2.instances.filter(Filters=[{'Name': 'tag:app', 'Values': ['kubeadv']}])
+    
+    action = event.get('action', '').lower()
+    
+    if action not in ['start', 'stop']:
+        return f"Invalid action: {action}. Use 'start' or 'stop'."
+    
+    for instance in instances:
+        print(f"Instance ID: {instance.id}, Type: {instance.instance_type}")
+        if action == 'start':
+            instance.start()
+        else:  # action == 'stop'
+            instance.stop()
+    
+    return f"{action.capitalize()}ed instances with tag app=kubeadv"
+

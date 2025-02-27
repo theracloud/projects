@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kubecert
+  namespace: world
+spec:
+  secretName: letsencrypt-secret
+  issuerRef:
+    name: kubeissuer
+    kind: ClusterIssuer
+  commonName: letsencrypt.theracloud.fr
+  dnsNames:
+  - letsencrypt.theracloud.fr

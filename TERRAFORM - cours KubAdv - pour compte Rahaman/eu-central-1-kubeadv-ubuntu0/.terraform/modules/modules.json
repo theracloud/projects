@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"","Source":"","Dir":"."},{"Key":"eu-central-1_kubeadv-ubuntu0","Source":"../modules/kubeadv-ubuntu0","Dir":"../modules/kubeadv-ubuntu0"},{"Key":"eu-central-1_kubeadv-vpc","Source":"../modules/kubeadv-vpc","Dir":"../modules/kubeadv-vpc"}]}

@@ -2,12 +2,13 @@
 # Création de l'instance EC2 node01 t3.medium avec OS ubuntu #
 ############################################################## 
 resource "aws_instance" "node01" {
-  ami                    = var.ami  # AMI Ubuntu 22.04 LTS pour eu-central-1
+  ami                    = var.ami
   instance_type          = "t3.medium"
+  key_name               = "eu-central-1-KP"
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [var.security_group_id]
-  iam_instance_profile   = "kubeadv-role"
-  
+  iam_instance_profile   = var.instance_profile
+   
   user_data = <<-EOF
 #!/bin/bash
 
@@ -86,7 +87,7 @@ systemctl restart sshd
 private_ip=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
 # Stocker l'IP dans un fichier S3
 echo "$private_ip" > /tmp/node01-ip.txt
-aws s3 cp /tmp/node01-ip.txt s3://kubeadv786/node01-ip.txt
+aws s3 cp /tmp/node01-ip.txt s3://kubeadv/init/node01-ip.txt
 
 #Boucle d'enregistrement du node01 dans le cluster ainsi que mise en place sshd correct et /etc/hosts
 max_attempts=10
@@ -94,15 +95,15 @@ attempt=0
 while [ $attempt -lt $max_attempts ]; do
   echo "Tentative $((attempt+1)) sur $max_attempts"
   # Télécharger le fichier d'enregistrement
-  if aws s3 cp s3://kubeadv786/node01-registration.txt /tmp/node01-registration.txt; then
+  if aws s3 cp s3://kubeadv/init/node01-registration.txt /tmp/node01-registration.txt; then
     # Exécuter la commande d'enregistrement
     if $(cat /tmp/node01-registration.txt); then
       # Récupérer la clé publique
-      if aws s3 cp s3://kubeadv786/controlplane0-authorized-key.txt /root/.ssh/authorized_keys; then
+      if aws s3 cp s3://kubeadv/init/controlplane0-authorized-key.txt /root/.ssh/authorized_keys; then
         # Récupérer le fichier config k8s
-        if aws s3 cp s3://kubeadv786/node01-config.txt /root/.kube/config; then
+        if aws s3 cp s3://kubeadv/init/node01-config.txt /root/.kube/config; then
           # Mettre à jour le fichier hosts
-          if controlplane0_ip=$(aws s3 cp s3://kubeadv786/controlplane0-ip.txt - | tr -d '\r') && [ -n "$controlplane0_ip" ]; then
+          if controlplane0_ip=$(aws s3 cp s3://kubeadv/init/controlplane0-ip.txt - | tr -d '\r') && [ -n "$controlplane0_ip" ]; then
             echo "$controlplane0_ip  controlplane0" >> /etc/hosts
             echo "Toutes les opérations ont réussi."
           exit 0
@@ -130,8 +131,9 @@ exit 1
   tags = {
     Name = "node01"
     user = "student0"
+    app =  "kubeadv"
   }
 
-  depends_on = [aws_instance.controlplane0]
+# depends_on = [aws_instance.controlplane0]
 
 }

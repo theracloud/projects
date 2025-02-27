@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: nginx-longhorn
+  name: nginx-longhorn
+spec:
+  serviceName: "nginx-longhorn"
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-longhorn
+  template:
+    metadata:
+      labels:
+        app: nginx-longhorn
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        volumeMounts:
+        - name: nginx-logs
+          mountPath: /var/log/nginx
+      - name: log-reader
+        image: busybox
+        command: ['sh', '-c', 'echo "Derniers logs du container nginx:" && tail -f /nginx-logs/access.log']
+        volumeMounts:
+        - name: nginx-logs
+          mountPath: /nginx-logs
+  volumeClaimTemplates:
+  - metadata:
+      name: nginx-logs
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "longhorn"
+      resources:
+        requests:
+          storage: 1Gi
+

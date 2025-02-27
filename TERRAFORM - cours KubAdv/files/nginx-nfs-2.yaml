@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-nfs-2
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    volumeMounts:
+    - name: nginx-logs
+      mountPath: /var/log/nginx
+  - name: log-reader
+    image: busybox
+    command: ['sh', '-c', 'echo "Derniers logs du container nginx:" && tail -f /nginx-logs/access.log']
+    volumeMounts:
+    - name: nginx-logs
+      mountPath: /nginx-logs
+  volumes:
+  - name: nginx-logs
+    persistentVolumeClaim:
+      claimName: nfs-pvc
+

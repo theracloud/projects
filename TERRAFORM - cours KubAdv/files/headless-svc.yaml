@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: asia-headless-svc
+  namespace: world
+spec:
+  clusterIP: None  # Indique que c'est un service headless car il n’y a pas d’IP
+  selector:
+    app: asia
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
+

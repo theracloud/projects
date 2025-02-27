@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: world
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: asia-deploy
+  namespace: world
+  labels:
+    app: asia
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: asia
+  template:
+    metadata:
+      labels:
+        app: asia
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - echo 'hello, you reached ASIA' > /usr/share/nginx/html/index.html;
+            nginx -g 'daemon off;'
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: europe-deploy
+  namespace: world
+  labels:
+    app: europe
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: europe
+  template:
+    metadata:
+      labels:
+        app: europe
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - echo 'hello, you reached EUROPE' > /usr/share/nginx/html/index.html;
+            nginx -g 'daemon off;'

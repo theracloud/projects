@@ -1,0 +1,1 @@
+2025/02/04 16:13:41 [emerg] 1#1: open() "/var/log/nginx/error.log" failed (1: Operation not permitted)

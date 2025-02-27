@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: s3-aws-pvc
+spec:
+  accessModes:
+    - ReadWriteMany # Supported options: ReadWriteMany / ReadOnlyMany
+  storageClassName: "" # Required for static provisioning
+  resources:
+    requests:
+      storage: 1Gi # Ignored, required
+  volumeName: s3-aws-pv # Name of your PV

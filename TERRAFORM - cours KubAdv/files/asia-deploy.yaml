@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: asia
+  name: asia-deploy
+  namespace: world
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: asia
+  template:
+    metadata:
+      labels:
+        app: asia
+    spec:
+      containers:
+      - args:
+        - echo 'hello, you reached ASIA' > /usr/share/nginx/html/index.html; nginx
+          -g 'daemon off;'
+        command:
+        - /bin/sh
+        - -c
+        image: nginx:latest
+        name: nginx-container

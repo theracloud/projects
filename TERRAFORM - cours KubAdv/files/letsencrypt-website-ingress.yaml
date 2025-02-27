@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: website-ingress
+  namespace: world
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: letsencrypt.theracloud.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: website-svc # Nom du service pour les pods europe
+                port:
+                  number: 80 # Port exposé par le service europe-svc 

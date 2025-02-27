@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: kubeissuer
+  namespace: world
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: rahaman.abdoul786@gmail.com
+    privateKeySecretRef:
+          name: kubeissuer
+    solvers:
+    - http01:
+        ingress:
+          class: nginx

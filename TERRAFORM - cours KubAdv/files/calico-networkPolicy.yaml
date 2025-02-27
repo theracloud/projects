@@ -1,0 +1,16 @@
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: deny-tcp-80-from-namespace-beta
+  namespace: default
+spec:
+  order: 100 # Pour rendre cette policy prioritaire sur la Global Policy (priority=1000 par défaut)
+  ingress:
+    - action: Deny
+      protocol: TCP
+      source:
+        namespaceSelector: kubernetes.io/metadata.name == 'beta'
+      destination:
+        ports:
+          - 80
+

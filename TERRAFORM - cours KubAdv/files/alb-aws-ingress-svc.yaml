@@ -1,0 +1,123 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: alb-ingress
+  namespace: world
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: instance
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+    service.beta.kubernetes.io/aws-load-balancer-subnets: subnet-0059b188d0015e236, subnet-0af534b7010c37f83
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+          - path: /europe
+            pathType: Prefix
+            backend:
+              service:
+                name: europe-nodeport-svc # Nom du service nodeport pour Europe
+                port:
+                  number: 80 # Port exposé par le service europe-svc et pas le port utilisé pour le NodePort
+          - path: /asia
+            pathType: Prefix
+            backend:
+              service:
+                name: asia-nodeport-svc # Nom du service nodeport pour Asia
+                port:
+                  number: 80 # Port exposé par le service asia-svc et pas le port utilisé pour le NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: europe
+  name: europe-nodeport-svc #Création d'un service de type Nodeport car l'ALB fonctionnera par instance
+  namespace: world
+spec:
+  ports:
+  - nodePort: 32080
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: europe
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: europe
+  name: europe-deploy #Modification du déploiement initiale pour que nginx gère / et /europe/
+  namespace: world
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: europe
+  template:
+    metadata:
+      labels:
+        app: europe
+    spec:
+      containers:
+      - args:
+        - |
+          mkdir -p /usr/share/nginx/html/europe 
+          echo 'hello, you reached EUROPE via /europe' > /usr/share/nginx/html/europe/index.html
+          echo 'hello, you reached EUROPE' > /usr/share/nginx/html/index.html
+          nginx -g 'daemon off;'
+        command:
+        - /bin/sh
+        - -c
+        image: nginx:latest
+        name: nginx-container
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: asia
+  name: asia-nodeport-svc #Création d'un service de type Nodeport car l'ALB fonctionnera par instance 
+  namespace: world
+spec:
+  ports:
+  - nodePort: 31080
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: asia
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: asia
+  name: asia-deploy #Modification du déploiement initiale pour que nginx gère / et /asia/
+  namespace: world
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: asia
+  template:
+    metadata:
+      labels:
+        app: asia
+    spec:
+      containers:
+      - args:
+        - |
+          mkdir -p /usr/share/nginx/html/asia
+          echo 'hello, you reached ASIA via /asia' > /usr/share/nginx/html/asia/index.html
+          echo 'hello, you reached ASIA' > /usr/share/nginx/html/index.html
+          nginx -g 'daemon off;'
+        command:
+        - /bin/sh
+        - -c
+        image: nginx:latest
+        name: nginx-container

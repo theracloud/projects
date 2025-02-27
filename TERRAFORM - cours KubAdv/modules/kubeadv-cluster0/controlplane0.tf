@@ -1,13 +1,11 @@
-﻿#####################################################################
-# Création de l'instance controlplane0 EC2 t3.medium avec OS ubuntu #
-#####################################################################
-resource "aws_instance" "controlplane0" {
-  ami                    = var.ami  # AMI Ubuntu 22.04 LTS pour eu-central-1
+﻿resource "aws_instance" "controlplane0" {
+  ami                    = var.ami
   instance_type          = "t3.medium"
+  key_name               = "eu-central-1-KP"
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [var.security_group_id]
-  iam_instance_profile   = "kubeadv-role"
-  
+  iam_instance_profile   = var.instance_profile
+
   user_data = <<-EOF
 #!/bin/bash
 
@@ -110,28 +108,31 @@ kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f https://github.com/flan
 private_ip=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
 # Stocker l'IP privée dans un fichier S3
 echo "$private_ip" > /tmp/controlplane0-ip.txt
-aws s3 cp /tmp/controlplane0-ip.txt s3://kubeadv786/controlplane0-ip.txt
+aws s3 cp /tmp/controlplane0-ip.txt s3://kubeadv/init/controlplane0-ip.txt
 
 # Récupérer la commande d'enregistrement pour le node01
 node_registration=$(sudo kubeadm token create --print-join-command)
 # Stocker la commande dans un fichier S3
 echo "$node_registration" > /tmp/node01-registration.txt
-aws s3 cp /tmp/node01-registration.txt s3://kubeadv786/node01-registration.txt
+aws s3 cp /tmp/node01-registration.txt s3://kubeadv/init/node01-registration.txt
 
 # Récupérer le fichier config k8s pour le node01
-aws s3 cp /etc/kubernetes/admin.conf s3://kubeadv786/node01-config.txt
+aws s3 cp /etc/kubernetes/admin.conf s3://kubeadv/init/node01-config.txt
+
+# Récupérer l'ensemble des fichiers de s3://kubeadv/files/
+aws s3 cp s3://kubeadv/files/ /root/files/ --recursive
 
 # Récupérer la clé publique pour l'accès SSH
 controlplane0_authorized_key="$(cat /root/.ssh/id_rsa.pub)"
 # Stocker la clé publique dans un fichier S3
 echo "$controlplane0_authorized_key" > /tmp/controlplane0-authorized-key.txt
-aws s3 cp /tmp/controlplane0-authorized-key.txt s3://kubeadv786/controlplane0-authorized-key.txt
+aws s3 cp /tmp/controlplane0-authorized-key.txt s3://kubeadv/init/controlplane0-authorized-key.txt
 
 # Mettre à jour le fichier hosts avec l'IP du node01
 cat > /root/node-to-ip << 'ENDSCRIPT'
 #!/bin/bash
 # Mettre à jour le fichier hosts pour node01
-node01_ip=$(aws s3 cp s3://kubeadv786/node01-ip.txt - | tr -d '\r')
+node01_ip=$(aws s3 cp s3://kubeadv/init/node01-ip.txt - | tr -d '\r')
 echo "$node01_ip node01" >> /etc/hosts
 ENDSCRIPT
 chmod +x /root/node-to-ip
@@ -148,6 +149,7 @@ chmod +x /root/node-to-ip
   tags = {
     Name = "controlplane0"
     user = "student0"
+    app  = "kubeadv"
   }
 }
 

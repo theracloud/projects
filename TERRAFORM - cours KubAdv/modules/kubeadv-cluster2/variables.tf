@@ -1,15 +1,10 @@
-variable "region" {
-  description = "Région pour toutes les ressources"
-  type = string
-}
-
 variable "ami" {
   description = "AMI Ubuntu pour la région"
   type = string
 }
 
-variable "availability_zone" {
-  description = "AZ pour le subnet"
+variable "key_pair" {
+  description = "Key pair pour eu-central-1"
   type        = string
 }
 

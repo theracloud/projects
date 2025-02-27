@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns
+  namespace: kube-system
+data:
+  bonjour.server: |
+    . {
+        hosts {
+            1.1.1.1 bonjour
+        }
+    }
+

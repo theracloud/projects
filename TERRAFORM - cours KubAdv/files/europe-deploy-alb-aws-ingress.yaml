@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: europe
+  name: europe-nodeport-svc
+  namespace: world
+spec:
+  ports:
+  - nodePort: 32080
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: europe
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: europe
+  name: europe-deploy
+  namespace: world
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: europe
+  template:
+    metadata:
+      labels:
+        app: europe
+    spec:
+      containers:
+      - args:
+        - |
+          mkdir -p /usr/share/nginx/html/europe
+          echo 'hello, you reached EUROPE via /europe' > /usr/share/nginx/html/europe/index.html
+          echo 'hello, you reached EUROPE' > /usr/share/nginx/html/index.html
+          nginx -g 'daemon off;'
+        command:
+        - /bin/sh
+        - -c
+        image: nginx:latest
+        name: nginx-container

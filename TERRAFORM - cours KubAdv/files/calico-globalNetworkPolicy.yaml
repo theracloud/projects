@@ -1,0 +1,14 @@
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: allow-controlplane-access
+spec:
+  selector: all()
+  types:
+  - Ingress
+  ingress:
+  - action: Allow
+    source:
+      nets:
+      - 0.0.0.0/0  # Autorisation depuis n'importe quelle IP, donc Internet
+

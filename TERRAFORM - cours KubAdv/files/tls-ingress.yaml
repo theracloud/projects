@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tls-ingress
+  namespace: world
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - ec2-3-72-36-67.eu-central-1.compute.amazonaws.com # Nom DNS du nodex1
+    secretName: self-signed-tls
+  rules:
+  - host: ec2-3-72-36-67.eu-central-1.compute.amazonaws.com # Nom DNS du nodex1
+    http:
+      paths:
+      - backend:
+          service:
+            name: europe-svc
+            port:
+              number: 80
+        path: /europe
+        pathType: Prefix
+      - backend:
+          service:
+            name: asia-svc
+            port:
+              number: 80
+        path: /asia
+        pathType: Prefix
+
