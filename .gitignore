@@ -28,3 +28,8 @@ crash.*.log
 #Contiennnent Access-key et secret key
 /TERRAFORM - image docker/
 /TERRAFORM - image docker 2/
+
+# suppression des fichiers sensibles
+*.ppk
+*.pem
+*.key
