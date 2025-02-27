@@ -255,7 +255,9 @@ Resources:
 
                   - region=
                   - !Ref 'AWS::Region'
-                  - |+... mode: '000400'
+                  - |+
+
+              mode: '000400'
               owner: root
               group: root
             /etc/cfn/hooks.d/cfn-auto-reloader.conf:
