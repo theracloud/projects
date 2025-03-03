@@ -1,0 +1,26 @@
+# https://cf-templates-oxfz35tnmjip-eu-central-1.s3.eu-central-1.amazonaws.com/parent-stack.yml
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Parent Stack for VPC and EC2
+
+Resources:
+  VPCStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cf-templates-oxfz35tnmjip-eu-central-1.s3.eu-central-1.amazonaws.com/vpc-stack.yml
+
+  EC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://cf-templates-oxfz35tnmjip-eu-central-1.s3.eu-central-1.amazonaws.com/ec2-stack.yml
+    DependsOn: VPCStack
+
+Outputs:
+  EC2InstanceId:
+    Description: ID of the EC2 instance from the nested stack
+    Value: !GetAtt EC2Stack.Outputs.InstanceId
+  EC2ElasticIP:
+    Description: Elastic IP of the EC2 instance from the nested stack
+    Value: !GetAtt EC2Stack.Outputs.ElasticIP
+  SecurityGroupId:
+    Description: Security Group ID from the nested stack
+    Value: !GetAtt VPCStack.Outputs.SecurityGroupId
